@@ -1,0 +1,129 @@
+Metadata-Version: 1.0
+Name: timetable
+Version: 0.2
+Summary: Generate timetables from iCal data.
+Home-page: https://bitbucket.org/luensdorf/timetable
+Author: Ontje Lünsdorf
+Author-email: oluensdorf@gmail.com
+License: UNKNOWN
+Description: Timetable - generate timetables from iCal files
+        ===============================================
+        
+        iCal is a relatively compact albeit unintuitive and inconvenient text format
+        for calendaring and scheduling information. Recurring events can be defined
+        through a large set of rules, which makes the format compact but inconvenient
+        for automatic processing. The intention of this package is to provide functions
+        to ease the automatic processing of iCalendar files by converting the iCalendar
+        information into a timetable.
+        
+        .. _timetable:
+        
+        Timetable data
+        --------------
+        
+        A timetable is a sorted sequence of tuples containing start and end datetime
+        of an entry, for example ``(start, end, entry)``. ``start`` and
+        ``end`` are *datetime* offset-naive objects (e.g. containing no timezone
+        information) in UTC time. The ``entry`` is a dictionary, containing arbitrary
+        values.
+        
+        The following example is a valid timetable list:
+        
+        .. code-block:: python
+        
+            [
+                (datetime(2015, 1, 1, 12), datetime(2015, 1, 1, 13), {}),
+                (datetime(2015, 1, 2, 12), datetime(2015, 1, 2, 13), {}),
+                (datetime(2015, 1, 3, 12), datetime(2015, 1, 3, 13), {}),
+            ]
+        
+        Timetables can be generated from iCal files. The following example shows how a
+        timetable is generated from all VEVENT entries in a iCal calendar. The example
+        prints the start *datetime* of each entry as well as the calendar events
+        summary:
+        
+        .. code-block:: python
+        
+            >>> from timetable import parse_ical, generate_timetable
+            >>>
+            >>> icaldata = b"""
+            ... BEGIN:VCALENDAR
+            ... BEGIN:VEVENT
+            ... UID:0
+            ... DTSTART:20150101T120000Z
+            ... DTEND:20150101T130000Z
+            ... RRULE:FREQ=DAILY;COUNT=3;BYDAY=TH,FR
+            ... SUMMARY:event a
+            ... END:VEVENT
+            ... BEGIN:VEVENT
+            ... UID:1
+            ... DTSTART:20150101T123000Z
+            ... DTEND:20150101T133000Z
+            ... RRULE:FREQ=DAILY;COUNT=3
+            ... SUMMARY:event b
+            ... END:VEVENT
+            ... END:VCALENDAR
+            ... """
+            >>> calendar = parse_ical(icaldata)[0]
+            >>> for start, end, entry in generate_timetable(calendar, b'vevent'):
+            ...     summary = str(entry['item'][b'summary'][0].value.decode('utf-8'))
+            ...     print('%s %s' % (start.isoformat(), summary))
+            2015-01-01T12:00:00 event a
+            2015-01-01T12:30:00 event b
+            2015-01-02T12:00:00 event a
+            2015-01-02T12:30:00 event b
+            2015-01-03T12:30:00 event b
+            2015-01-08T12:00:00 event a
+        
+        spam or eggs?
+        -------------
+        
+        Timetable data can be used to calculate metrics for time management, like for
+        example, compute the time spent in meetings or working on projects.
+        
+        However, of more pressing concern is the question if you spent more time eating
+        eggs or spam for lunch in two months, assuming you eat spam for 45 minutes but
+        only every other week on monday and tuesday whereas you eat eggs for 15 minutes
+        every week but only from wednesday to friday:
+        
+        .. code-block:: python
+        
+            >>> from datetime import datetime, timedelta
+            >>> from timetable import parse_ical, generate_timetable, clip_timetable
+            >>> 
+            >>> icaldata = b"""
+            ... BEGIN:VCALENDAR
+            ... BEGIN:VEVENT
+            ... UID:0
+            ... DTSTART:20150101T120000Z
+            ... DTEND:20150101T124500Z
+            ... RRULE:FREQ=WEEKLY;BYDAY=MO,TU;INTERVAL=2
+            ... SUMMARY:spam
+            ... END:VEVENT
+            ... BEGIN:VEVENT
+            ... UID:1
+            ... DTSTART:20150101T120000Z
+            ... DTEND:20150101T121500Z
+            ... RRULE:FREQ=WEEKLY;BYDAY=WE,TH,FR
+            ... SUMMARY:eggs
+            ... END:VEVENT
+            ... END:VCALENDAR
+            ... """
+            >>> calendar = parse_ical(icaldata)[0]
+            >>> 
+            >>> start = datetime(2015, 1, 1)
+            >>> end = datetime(2015, 3, 1)
+            >>> timetable = clip_timetable(generate_timetable(calendar), start, end)
+            >>> 
+            >>> time = {b'spam': 0, b'eggs': 0}
+            >>> for start, end, entry in timetable:
+            ...     food_name = entry['item'][b'summary'][0].value
+            ...     time[food_name] += (end - start).total_seconds() / 3600
+            >>> 
+            >>> print('spam: %.2f, eggs: %.2f' % (time[b'spam'], time[b'eggs']))
+            spam: 6.75, eggs: 6.50
+        
+        It looks like spam.
+        
+Keywords: time,timetable,ical,calendar
+Platform: UNKNOWN

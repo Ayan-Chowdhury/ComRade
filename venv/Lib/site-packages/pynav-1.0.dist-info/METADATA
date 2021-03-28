@@ -1,0 +1,97 @@
+Metadata-Version: 2.1
+Name: pynav
+Version: 1.0
+Summary: Python programmatic web browser to fetch data and test web sites
+Home-page: http://bitbucket.org/sloft/pynav/
+Author: sloft
+Author-email: nomail@example.com
+License: GNU Lesser General Public License (LGPL)
+Download-URL: http://bitbucket.org/sloft/pynav/downloads/
+Keywords: programmatic,web,browser
+Platform: UNKNOWN
+Classifier: Programming Language :: Python
+Classifier: Programming Language :: Python :: 3.5
+Classifier: Programming Language :: Python :: 3.6
+Classifier: Programming Language :: Python :: 3.7
+Classifier: Operating System :: OS Independent
+Classifier: License :: OSI Approved :: GNU Library or Lesser General Public License (LGPL)
+Classifier: Development Status :: 4 - Beta
+Classifier: Environment :: Console
+Classifier: Topic :: Internet
+Classifier: Intended Audience :: Developers
+Classifier: Topic :: Internet :: WWW/HTTP
+Classifier: Topic :: Internet :: WWW/HTTP :: Browsers
+Classifier: Topic :: Internet :: WWW/HTTP :: Indexing/Search
+Classifier: Topic :: Internet :: WWW/HTTP :: Site Management
+Classifier: Topic :: Internet :: WWW/HTTP :: Site Management :: Link Checking
+Classifier: Topic :: Software Development :: Libraries
+Classifier: Topic :: Software Development :: Libraries :: Python Modules
+Requires-Python: >=3.5
+
+Copyright 2009-2018 Sloft http://bitbucket.org/sloft/pynav
+
+Name: pynav
+Version: 1.0
+Summary: Python programmatic web browser to fetch data and test web sites
+Home-page: http://bitbucket.org/sloft/pynav/
+Author: sloft
+License: LGPL
+Download-URL: http://bitbucket.org/sloft/pynav/downloads/
+Description: Python programmatic web browser to fetch data and test web sites
+        ________________________________________________________________
+
+        Features:
+
+        -Post authentication
+        -User agent support
+        -Automatic cookie handling
+        -HTTP Basic Authentication support
+        -HTTPS support
+        -Proxy support
+        -Timeout support
+        -Reg exp searching
+        -Links fetching with reg exp filter
+        -History (pages, posts and responses)
+        -Save and load history from a file and replay navigation
+        -Random sleep time beetween pages
+        -Errors handling
+        -Content type filters
+		-Check 404 urls
+		-Check resource datetime
+		-Handle robots.txt
+        _______________________________________________________________
+
+        Bug reporting and features asking are welcome.
+        Use the the bug tracker: http://bitbucket.org/sloft/pynav/issues?status=new&status=open
+
+
+Python version: 3.5+
+
+INSTALLATION:
+
+- With pip:
+pip3 install pynav
+
+- From sources:
+python3 setup.py install
+
+
+2018-10-11 Pynav 1.0
+
+	* New: pynav ported to Python 3
+	* New: Python 2.6 is no longer supported, Python 3.5 minimum is now required.
+	* New: Add useragent.py containing an updated user agent list, update Browser to use it
+	* New: Add Type Hints for IDE completion in Browser
+	* New : formdumper deleted because ClientForm does not meet Python 3 requirements
+	* New : 3 Response methods are no longer supported : Response.dump_form(), Response.dump_forms(), Response.formDumper()
+
+	* Qual: Migrate Python 2.6 code to Python 3.5
+	* Qual: Browser.check_404() renamed to Browser.is_404()
+	* Qual: #  -*- coding=utf-8 -*- removed in all files because utf-8 is the default source encoding in python 3
+
+	* Fix: Browser.download() bug when url is the root url + rename built-in name bytes in Browser._humanize_bytes()
+	* Fix: header datetime conversion regression in Browser.check_new_resource(), Response.date and Response.last_modified
+	* Fix: relative url bug in Browser.response.images with urllib.parse.urljoin
+
+
+
